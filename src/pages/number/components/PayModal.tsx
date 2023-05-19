@@ -12,7 +12,7 @@ import {
   Box,
   Grid
 } from '@chakra-ui/react';
-import { getPayCode, checkPayResult } from '@/api/user';
+import { getPayCode, getPayCodeYungou, checkPayResult } from '@/api/user';
 import { useToast } from '@/hooks/useToast';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
@@ -28,8 +28,10 @@ const PayModal = ({ onClose }: { onClose: () => void }) => {
     if (!inputVal || inputVal <= 0 || isNaN(+inputVal)) return;
     setLoading(true);
     try {
-      // 获取支付二维码
-      const res = await getPayCode(inputVal);
+      let res;
+      // 根据环境变量中设置的支付方式选择调用哪个函数生成paycode
+      res = await getPayCodeYungou(inputVal);
+
       new QRCode(document.getElementById('payQRCode'), {
         text: res.codeUrl,
         width: 128,

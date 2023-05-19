@@ -78,6 +78,12 @@ export const getPayCode = (amount: number) =>
     payId: string;
   }>(`/user/getPayCode?amount=${amount}`);
 
+export const getPayCodeYungou = (amount: number) =>
+  GET<{
+    codeUrl: string;
+    payId: string;
+  }>(`/user/getPayCodeYungou?amount=${amount}`);
+
 export const checkPayResult = (payId: string) => GET<number>(`/user/checkPayResult?payId=${payId}`);
 
 /* promotion records */
