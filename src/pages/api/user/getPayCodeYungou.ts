@@ -4,10 +4,7 @@ import { authToken } from '@/service/utils/auth';
 import { customAlphabet } from 'nanoid';
 import { connectToDatabase, Pay } from '@/service/mongo';
 import { PRICE_SCALE } from '@/constants/common';
-/* eslint-disable */
-// @ts-ignore
 import { WxPay } from 'yungouos-pay-node-sdk';
-/* eslint-enable */
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 20);
 
