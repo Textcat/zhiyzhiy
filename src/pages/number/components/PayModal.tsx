@@ -30,6 +30,7 @@ const PayModal = ({ onClose }: { onClose: () => void }) => {
     try {
       // 获取支付二维码
       const res = await getPayCode(inputVal);
+      console.log(res);
       new QRCode(document.getElementById('payQRCode'), {
         text: res.codeUrl,
         width: 128,
@@ -64,7 +65,8 @@ const PayModal = ({ onClose }: { onClose: () => void }) => {
           status: 'success'
         });
         router.reload();
-      }
+      },
+      enabled: process.env.NEXT_PUBLIC_PAYMENT === 'wxpay' // Only run this query if the YUNGOU_PAY variable is "TRUE"
     }
   );
 
