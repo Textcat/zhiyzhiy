@@ -39,8 +39,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (payOrder.status !== 'NOTPAY') {
-      throw new Error('订单已结算');
+      return jsonRes(res, {
+        code: 200,
+        message: 'SUCCESS'
+      });
     }
+
     const payId = payOrder._id;
 
     // 获取 userId
