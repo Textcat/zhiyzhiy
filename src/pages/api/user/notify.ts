@@ -39,10 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (payOrder.status !== 'NOTPAY') {
-      return jsonRes(res, {
-        code: 200,
-        message: 'SUCCESS'
-      });
+      return res.status(200).send('SUCCESS');
     }
 
     const payId = payOrder._id;
@@ -93,10 +90,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               amount: (payOrder.price / PRICE_SCALE) * inviter.promotion.rate * 0.01
             });
           }
-          jsonRes(res, {
-            code: 200,
-            message: 'SUCCESS'
-          });
+          res.status(200).send('SUCCESS');
         }
       } catch (error) {
         await Pay.findByIdAndUpdate(payId, {
