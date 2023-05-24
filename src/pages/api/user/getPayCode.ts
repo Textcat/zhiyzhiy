@@ -5,6 +5,7 @@ import { customAlphabet } from 'nanoid';
 import { connectToDatabase, Pay } from '@/service/mongo';
 import { PRICE_SCALE } from '@/constants/common';
 import { nativePay } from '@/service/utils/wxpay';
+import { yungouwxpay } from '@/service/utils/yungoupay';
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 20);
 
@@ -18,8 +19,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const id = nanoid();
     await connectToDatabase();
+    let code_url = '';
 
-    const code_url = await nativePay(amount * 100, id);
+    if (process.env.NEXT_PUBLIC_PAYMENT === 'yungou') {
+      code_url = await yungouwxpay(amount, id);
+    }
+    if (process.env.NEXT_PUBLIC_PAYMENT === 'wxpay') {
+      code_url = await nativePay(amount * 100, id);
+    }
 
     // 充值记录 + 1
     const payOrder = await Pay.create({
