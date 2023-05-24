@@ -4,7 +4,7 @@ import { WxPay } from 'yungouos-pay-node-sdk'; // if this is your library for th
 const mch_id = process.env.MCH_ID;
 const payKey = process.env.PAYKEY;
 const body = 'chatwise 充值';
-const notify_url = 'your_notify_url_here'; // replace with your actual notify URL
+const notify_url = 'https://chat.chatwise.cloud/api/user/notify'; // replace with your actual notify URL
 
 // I'm assuming all the other inputs should be null based on your instructions
 const type = null;
