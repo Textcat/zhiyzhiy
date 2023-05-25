@@ -12,7 +12,7 @@ import {
   Box,
   Grid
 } from '@chakra-ui/react';
-import { getPayCode, checkPayResult } from '@/api/user';
+import { getPayCode, checkPayResult, checkYungouPayResult } from '@/api/user';
 import { useToast } from '@/hooks/useToast';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
@@ -54,7 +54,11 @@ const PayModal = ({ onClose }: { onClose: () => void }) => {
     [payId],
     () => {
       if (!payId) return null;
-      return checkPayResult(payId);
+      if (process.env.NEXT_PUBLIC_PAYMENT === 'wxpay') {
+        return checkPayResult(payId);
+      } else if (process.env.NEXT_PUBLIC_PAYMENT === 'yungou') {
+        return checkYungouPayResult(payId);
+      }
     },
     {
       refetchInterval: 2000,
@@ -65,8 +69,7 @@ const PayModal = ({ onClose }: { onClose: () => void }) => {
           status: 'success'
         });
         router.reload();
-      },
-      enabled: process.env.NEXT_PUBLIC_PAYMENT === 'wxpay' // Only run this query if the YUNGOU_PAY variable is "TRUE"
+      }
     }
   );
 

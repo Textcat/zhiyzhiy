@@ -80,6 +80,9 @@ export const getPayCode = (amount: number) =>
 
 export const checkPayResult = (payId: string) => GET<number>(`/user/checkPayResult?payId=${payId}`);
 
+export const checkYungouPayResult = (payId: string) =>
+  GET<number>(`/user/checkYungouPayResult?payId=${payId}`);
+
 /* promotion records */
 export const getPromotionRecords = (data: RequestPaging) =>
   GET<PromotionRecordType>(`/user/promotion/getPromotions?${Obj2Query(data)}`);
