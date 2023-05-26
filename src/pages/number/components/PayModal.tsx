@@ -67,9 +67,14 @@ const PayModal = ({ onClose }: { onClose: () => void }) => {
         if (!res) return;
         toast({
           title: '充值成功',
-          status: 'success'
+          status: 'success',
+          onCloseComplete: () => {
+            // 等待 2 秒后重新加载页面
+            setTimeout(() => {
+              router.reload();
+            }, 1500);
+          }
         });
-        router.reload();
       }
     }
   );
