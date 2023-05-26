@@ -63,6 +63,7 @@ const PayModal = ({ onClose }: { onClose: () => void }) => {
     {
       refetchInterval: 2000,
       onSuccess(res) {
+        console.log(res);
         if (!res) return;
         toast({
           title: '充值成功',
