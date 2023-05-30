@@ -39,10 +39,10 @@ const Empty = ({
           <Box whiteSpace={'pre-line'}>{intro}</Box>
         </Card>
       )}
-
+      {/* 
       {showChatProblem && (
         <>
-          {/* version intro */}
+
           <Card p={4} mb={10}>
             <Markdown source={versionIntro} />
           </Card>
@@ -51,6 +51,7 @@ const Empty = ({
           </Card>
         </>
       )}
+      */}
     </Box>
   );
 };

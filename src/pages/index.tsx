@@ -160,13 +160,13 @@ const Home = () => {
           letterSpacing={'5px'}
           color={'myBlue.600'}
         >
-          FastGpt
+          AI任意门
         </Box>
         <Box color={'myBlue.600'} fontSize={['30px', '50px']}>
           三分钟
         </Box>
         <Box color={'myBlue.600'} fontSize={['30px', '50px']}>
-          搭建 AI 知识库
+          你的私人智能助手
         </Box>
 
         <Button
@@ -181,9 +181,11 @@ const Home = () => {
       </Flex>
 
       <Box w={'100%'} mt={'100vh'} px={[5, 10]} pb={[5, 10]}>
+        {/*
         <Card p={5} lineHeight={2}>
           <Markdown source={data} isChatting={false} />
         </Card>
+       */}
 
         <Card p={5} mt={4} textAlign={'center'}>
           {beianText && (
