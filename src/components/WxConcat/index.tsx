@@ -23,7 +23,7 @@ const WxConcat = ({ onClose }: { onClose: () => void }) => {
         <ModalBody textAlign={'center'}>
           <Image
             style={{ margin: 'auto' }}
-            src={'https://otnvvf-imgs.oss.laf.run/wx300.jpg'}
+            src={'https://xp3i9s-images.oss.laf.run/IMG_7519.jpg'}
             width={'200px'}
             height={'200px'}
             alt=""
@@ -31,7 +31,7 @@ const WxConcat = ({ onClose }: { onClose: () => void }) => {
           <Box mt={2}>
             微信号:
             <Box as={'span'} userSelect={'all'}>
-              YNyiqi
+              zzfeixia
             </Box>
           </Box>
         </ModalBody>
