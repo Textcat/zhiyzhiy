@@ -61,7 +61,8 @@ export async function generateQA(): Promise<any> {
       userId: 1,
       kbId: 1,
       prompt: 1,
-      q: 1
+      q: 1,
+      source: 1
     });
 
     // task preemption
@@ -75,10 +76,11 @@ export async function generateQA(): Promise<any> {
     const kbId = String(data.kbId);
 
     // 余额校验并获取 openapi Key
-    const { userOpenAiKey, systemAuthKey } = await getApiKey({
+    const { systemAuthKey } = await getApiKey({
       model: OpenAiChatEnum.GPT35,
       userId,
-      type: 'training'
+      type: 'training',
+      mustPay: true
     });
 
     const startTime = Date.now();
@@ -88,7 +90,7 @@ export async function generateQA(): Promise<any> {
       [data.q].map((text) =>
         modelServiceToolMap[OpenAiChatEnum.GPT35]
           .chatCompletion({
-            apiKey: userOpenAiKey || systemAuthKey,
+            apiKey: systemAuthKey,
             temperature: 0.8,
             messages: [
               {
@@ -113,7 +115,7 @@ A2:
             console.log(`split result length: `, result.length);
             // 计费
             pushSplitDataBill({
-              isPay: !userOpenAiKey && result.length > 0,
+              isPay: result.length > 0,
               userId: data.userId,
               type: BillTypeEnum.QA,
               textLen: responseMessages.map((item) => item.value).join('').length,
@@ -137,7 +139,10 @@ A2:
     // 创建 向量生成 队列
     await pushDataToKb({
       kbId,
-      data: responseList,
+      data: responseList.map((item) => ({
+        ...item,
+        source: data.source
+      })),
       userId,
       mode: TrainingModeEnum.index
     });
