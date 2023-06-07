@@ -3,6 +3,7 @@ import type { ShareChatEditType } from '@/types/model';
 import type { ModelSchema } from '@/types/mongoSchema';
 
 export const embeddingModel = 'text-embedding-ada-002';
+export const embeddingPrice = 0.1;
 export type EmbeddingModelType = 'text-embedding-ada-002';
 
 export enum OpenAiChatEnum {
@@ -112,15 +113,15 @@ export const ModelVectorSearchModeMap: Record<
 > = {
   [appVectorSearchModeEnum.hightSimilarity]: {
     text: '高相似度, 无匹配时拒绝回复',
-    similarity: 0.18
+    similarity: 0.8
   },
   [appVectorSearchModeEnum.noContext]: {
     text: '高相似度，无匹配时直接回复',
-    similarity: 0.18
+    similarity: 0.8
   },
   [appVectorSearchModeEnum.lowSimilarity]: {
     text: '低相似度匹配',
-    similarity: 0.7
+    similarity: 0.3
   }
 };
 

@@ -17,6 +17,7 @@ import { useToast } from '@/hooks/useToast';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { getErrText } from '@/utils/tools';
+import Markdown from '@/components/Markdown';
 
 const PayModal = ({ onClose }: { onClose: () => void }) => {
   const router = useRouter();
@@ -61,6 +62,7 @@ const PayModal = ({ onClose }: { onClose: () => void }) => {
       }
     },
     {
+      enabled: !!payId,
       refetchInterval: 2000,
       onSuccess(res) {
         console.log(res);
@@ -89,7 +91,7 @@ const PayModal = ({ onClose }: { onClose: () => void }) => {
         }}
       >
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent minW={'auto'}>
           <ModalHeader>充值</ModalHeader>
           {!payId && <ModalCloseButton />}
 
@@ -97,7 +99,7 @@ const PayModal = ({ onClose }: { onClose: () => void }) => {
             {!payId && (
               <>
                 <Grid gridTemplateColumns={'repeat(4,1fr)'} gridGap={5} mb={4}>
-                  {[5, 10, 20, 50].map((item) => (
+                  {[10, 20, 50, 100].map((item) => (
                     <Button
                       key={item}
                       variant={item === inputVal ? 'solid' : 'outline'}
@@ -107,7 +109,7 @@ const PayModal = ({ onClose }: { onClose: () => void }) => {
                     </Button>
                   ))}
                 </Grid>
-                <Box>
+                <Box mb={4}>
                   <Input
                     value={inputVal}
                     type={'number'}
@@ -118,6 +120,15 @@ const PayModal = ({ onClose }: { onClose: () => void }) => {
                     }}
                   ></Input>
                 </Box>
+                <Markdown
+                  source={`
+| 计费项 | 价格: 元/ 1K tokens(包含上下文)|
+| --- | --- |
+| 知识库 - 索引 | 0.001 |
+| chatgpt - 对话 | 0.025 |
+| gpt4 - 对话 | 0.5 |
+| 文件拆分 | 0.025 |`}
+                />
               </>
             )}
             {/* 付费二维码 */}

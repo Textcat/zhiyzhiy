@@ -8,7 +8,6 @@ const map = {
   chatSend: require('./icons/chatSend.svg').default,
   develop: require('./icons/develop.svg').default,
   user: require('./icons/user.svg').default,
-  promotion: require('./icons/promotion.svg').default,
   delete: require('./icons/delete.svg').default,
   withdraw: require('./icons/withdraw.svg').default,
   stop: require('./icons/stop.svg').default,
@@ -29,7 +28,8 @@ const map = {
   kb: require('./icons/kb.svg').default,
   appStore: require('./icons/appStore.svg').default,
   menu: require('./icons/menu.svg').default,
-  edit: require('./icons/edit.svg').default
+  edit: require('./icons/edit.svg').default,
+  inform: require('./icons/inform.svg').default
 };
 
 export type IconName = keyof typeof map;
