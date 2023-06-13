@@ -12,6 +12,8 @@ export type PagingData<T> = {
 
 export type RequestPaging = { pageNum: number; pageSize: number; [key]: any };
 
+declare module 'yungouos-pay-node-sdk';
+
 declare global {
   var mongodb: Mongoose | string | null;
   var pgClient: Pool | null;
