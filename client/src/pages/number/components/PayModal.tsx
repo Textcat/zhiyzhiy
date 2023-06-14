@@ -65,18 +65,12 @@ const PayModal = ({ onClose }: { onClose: () => void }) => {
       enabled: !!payId,
       refetchInterval: 2000,
       onSuccess(res) {
-        console.log(res);
         if (!res) return;
         toast({
           title: '充值成功',
-          status: 'success',
-          onCloseComplete: () => {
-            // 等待 2 秒后重新加载页面
-            setTimeout(() => {
-              router.reload();
-            }, 1500);
-          }
+          status: 'success'
         });
+        router.reload();
       }
     }
   );
