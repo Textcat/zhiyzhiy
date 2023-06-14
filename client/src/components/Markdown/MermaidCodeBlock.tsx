@@ -24,17 +24,41 @@ mermaidAPI.initialize({
 const MermaidBlock = ({ code }: { code: string }) => {
   const dom = useRef<HTMLDivElement>(null);
   const [svg, setSvg] = useState('');
+  const [errorSvgCode, setErrorSvgCode] = useState('');
 
   useEffect(() => {
-    try {
-      const formatCode = code.replace(/：/g, ':');
-
-      mermaidAPI.render(`mermaid-${Date.now()}`, formatCode, (svgCode: string) => {
+    (async () => {
+      const punctuationMap: Record<string, string> = {
+        '，': ',',
+        '；': ';',
+        '。': '.',
+        '：': ':',
+        '！': '!',
+        '？': '?',
+        '“': '"',
+        '”': '"',
+        '‘': "'",
+        '’': "'",
+        '【': '[',
+        '】': ']',
+        '（': '(',
+        '）': ')',
+        '《': '<',
+        '》': '>',
+        '、': ','
+      };
+      const formatCode = code.replace(
+        /([，；。：！？“”‘’【】（）《》、])/g,
+        (match) => punctuationMap[match]
+      );
+      try {
+        const svgCode = await mermaidAPI.render(`mermaid-${Date.now()}`, formatCode);
         setSvg(svgCode);
-      });
-    } catch (error) {
-      console.log(error);
-    }
+      } catch (error) {
+        setErrorSvgCode(formatCode);
+        console.log(error);
+      }
+    })();
   }, [code]);
 
   const onclickExport = useCallback(() => {
