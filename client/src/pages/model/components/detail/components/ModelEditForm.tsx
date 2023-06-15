@@ -104,12 +104,12 @@ const ModelEditForm = ({
       const file = e[0];
       if (!file) return;
       try {
-        const base64 = await compressImg({
+        const src = await compressImg({
           file,
           maxW: 100,
           maxH: 100
         });
-        setValue('avatar', base64);
+        setValue('avatar', src);
         setRefresh((state) => !state);
       } catch (err: any) {
         toast({
@@ -182,7 +182,7 @@ ${e.password ? `密码为: ${e.password}` : ''}`;
         <Box fontWeight={'bold'}>基本信息</Box>
         <Flex alignItems={'center'} mt={4}>
           <Box flex={'0 0 80px'} w={0}>
-            modelId
+            AppId
           </Box>
           <Box userSelect={'all'}>{getValues('_id')}</Box>
         </Flex>
@@ -344,7 +344,7 @@ ${e.password ? `密码为: ${e.password}` : ''}`;
       {isOwner && (
         <>
           {/* model share setting */}
-          <Card p={4}>
+          {/* <Card p={4}>
             <Box fontWeight={'bold'}>分享设置</Box>
             <Box>
               <Flex mt={5} alignItems={'center'}>
@@ -373,7 +373,7 @@ ${e.password ? `密码为: ${e.password}` : ''}`;
                 />
               </Box>
             </Box>
-          </Card>
+          </Card> */}
           <Card p={4}>
             <Flex justifyContent={'space-between'}>
               <Box fontWeight={'bold'}>关联的知识库</Box>
@@ -411,7 +411,7 @@ ${e.password ? `密码为: ${e.password}` : ''}`;
         </>
       )}
       {/* shareChat */}
-      <Card p={4} gridColumnStart={1} gridColumnEnd={[2, 3]}>
+      <Card p={4}>
         <Flex justifyContent={'space-between'}>
           <Box fontWeight={'bold'}>
             免登录聊天窗口
