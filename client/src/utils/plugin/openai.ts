@@ -1,9 +1,12 @@
 import { encoding_for_model, type Tiktoken } from '@dqbd/tiktoken';
-import type { ChatItemSimpleType } from '@/types/chat';
+import type { ChatItemType } from '@/types/chat';
 import { ChatRoleEnum } from '@/constants/chat';
-import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum } from 'openai';
+import { type ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum } from 'openai';
 import { OpenAiChatEnum } from '@/constants/model';
 import Graphemer from 'graphemer';
+import axios from 'axios';
+import dayjs from 'dayjs';
+import type { MessageItemType } from '@/pages/api/openapi/v1/chat/completions';
 
 const textDecoder = new TextDecoder();
 const graphemer = new Graphemer();
@@ -84,16 +87,19 @@ export const getOpenAiEncMap = () => {
 };
 
 export const adaptChatItem_openAI = ({
-  messages
+  messages,
+  reserveId
 }: {
-  messages: ChatItemSimpleType[];
-}): ChatCompletionRequestMessage[] => {
+  messages: ChatItemType[];
+  reserveId: boolean;
+}): MessageItemType[] => {
   const map = {
     [ChatRoleEnum.AI]: ChatCompletionRequestMessageRoleEnum.Assistant,
     [ChatRoleEnum.Human]: ChatCompletionRequestMessageRoleEnum.User,
     [ChatRoleEnum.System]: ChatCompletionRequestMessageRoleEnum.System
   };
   return messages.map((item) => ({
+    ...(reserveId && { _id: item._id }),
     role: map[item.obj] || ChatCompletionRequestMessageRoleEnum.System,
     content: item.value || ''
   }));
@@ -103,15 +109,11 @@ export function countOpenAIToken({
   messages,
   model
 }: {
-  messages: ChatItemSimpleType[];
+  messages: ChatItemType[];
   model: `${OpenAiChatEnum}`;
 }) {
   function getChatGPTEncodingText(
-    messages: {
-      role: 'system' | 'user' | 'assistant';
-      content: string;
-      name?: string;
-    }[],
+    messages: ChatCompletionRequestMessage[],
     model: `${OpenAiChatEnum}`
   ) {
     const isGpt3 = model.startsWith('gpt-3.5-turbo');
@@ -156,7 +158,7 @@ export function countOpenAIToken({
     return segments.reduce((memo, i) => memo + i.tokens.length, 0) ?? 0;
   }
 
-  const adaptMessages = adaptChatItem_openAI({ messages });
+  const adaptMessages = adaptChatItem_openAI({ messages, reserveId: true });
 
   return text2TokensLen(getOpenAiEncMap()[model], getChatGPTEncodingText(adaptMessages, model));
 }
@@ -174,4 +176,27 @@ export const openAiSliceTextByToken = ({
   const encodeText = enc.encode(text);
   const decoder = new TextDecoder();
   return decoder.decode(enc.decode(encodeText.slice(0, length)));
+};
+
+export const authOpenAiKey = async (key: string) => {
+  return axios
+    .get('https://ccdbwscohpmu.cloud.sealos.io/openai/v1/dashboard/billing/subscription', {
+      headers: {
+        Authorization: `Bearer ${key}`
+      }
+    })
+    .then((res) => {
+      if (!res.data.access_until) {
+        return Promise.reject('OpenAI Key 无效，请重试或更换 key');
+      }
+      const keyExpiredTime = dayjs(res.data.access_until * 1000);
+      const currentTime = dayjs();
+      if (keyExpiredTime.isBefore(currentTime)) {
+        return Promise.reject('OpenAI Key 已过期');
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      return Promise.reject(err?.response?.data?.error || 'OpenAI 账号无效，请重试或更换 key');
+    });
 };

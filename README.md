@@ -1,6 +1,6 @@
 # Fast GPT
 
-Fast GPT 允许你使用自己的 openai API KEY 来快速的调用 openai 接口，目前集成了 Gpt35, Gpt4 和 embedding. 可构建自己的知识库。
+Fast GPT 允许你使用自己的 openai API KEY 来快速的调用 openai 接口，目前集成了 Gpt35, Gpt4 和 embedding. 可构建自己的知识库。并且 OpenAPI Chat 接口兼容 OpenAI 接口，意味着你只需修改 BaseUrl 和 Authorization 即可在已有项目基础上接入 FastGpt！
 
 ## 🛸 在线体验
 
@@ -41,6 +41,12 @@ Fast GPT 允许你使用自己的 openai API KEY 来快速的调用 openai 接�
 - [公众号接入](https://www.bilibili.com/video/BV1xh4y1t7fy/)
 - [FastGpt V3.4 更新集合](https://www.bilibili.com/video/BV1Lo4y147Qh/?vd_source=92041a1a395f852f9d89158eaa3f61b4)
 - [FastGpt 知识库演示](https://www.bilibili.com/video/BV1Wo4y1p7i1/)
+
+## Powered by
+
+- [TuShan 5 分钟搭建后台管理系统](https://github.com/msgbyte/tushan)
+- [Laf 3 分钟快速接入三方应用](https://github.com/labring/laf)
+- [Sealos 快速部署集群应用](https://github.com/labring/sealos)
 
 ## 🌟 Star History
 
