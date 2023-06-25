@@ -55,7 +55,6 @@ export async function generateQA(): Promise<any> {
     const { systemAuthKey } = await getApiKey({
       model: OpenAiChatEnum.GPT35,
       userId,
-      type: 'training',
       mustPay: true
     });
 
@@ -154,7 +153,8 @@ A2:
       sendInform({
         type: 'system',
         title: 'QA 任务中止',
-        content: '由于账号余额不足，QA 任务中止，重新充值后将会继续。',
+        content:
+          '由于账号余额不足，索引生成任务中止，重新充值后将会继续。暂停的任务将在 7 天后被删除。',
         userId
       });
       console.log('余额不足，暂停向量生成任务');

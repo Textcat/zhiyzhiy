@@ -14,9 +14,9 @@ import { gptMessage2ChatType, textAdaptGptResponse } from '@/utils/adapt';
 import { getChatHistory } from './getHistory';
 import { saveChat } from '@/pages/api/chat/saveChat';
 import { sseResponse } from '@/service/utils/tools';
-import { getErrText } from '@/utils/tools';
 import { type ChatCompletionRequestMessage } from 'openai';
 import { Types } from 'mongoose';
+import { sensitiveCheck } from '../../text/sensitiveCheck';
 
 export type MessageItemType = ChatCompletionRequestMessage & { _id?: string };
 type FastGptWebChatProps = {
@@ -108,11 +108,12 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
     const {
       rawSearch = [],
       userSystemPrompt = [],
+      userLimitPrompt = [],
       quotePrompt = []
     } = await (async () => {
       // 使用了知识库搜索
       if (model.chat.relatedKbs?.length > 0) {
-        const { rawSearch, userSystemPrompt, quotePrompt } = await appKbSearch({
+        const { rawSearch, quotePrompt, userSystemPrompt, userLimitPrompt } = await appKbSearch({
           model,
           userId,
           fixedQuote: history[history.length - 1]?.quote,
@@ -123,21 +124,29 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
 
         return {
           rawSearch,
-          userSystemPrompt: userSystemPrompt ? [userSystemPrompt] : [],
+          userSystemPrompt,
+          userLimitPrompt,
           quotePrompt: [quotePrompt]
         };
       }
-      if (model.chat.systemPrompt) {
-        return {
-          userSystemPrompt: [
-            {
-              obj: ChatRoleEnum.System,
-              value: model.chat.systemPrompt
-            }
-          ]
-        };
-      }
-      return {};
+      return {
+        userSystemPrompt: model.chat.systemPrompt
+          ? [
+              {
+                obj: ChatRoleEnum.System,
+                value: model.chat.systemPrompt
+              }
+            ]
+          : [],
+        userLimitPrompt: model.chat.limitPrompt
+          ? [
+              {
+                obj: ChatRoleEnum.Human,
+                value: model.chat.limitPrompt
+              }
+            ]
+          : []
+      };
     })();
 
     // search result is empty
@@ -167,13 +176,23 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
     }
 
     // api messages. [quote,context,systemPrompt,question]
-    const completePrompts = [...quotePrompt, ...prompts.slice(0, -1), ...userSystemPrompt, prompt];
+    const completePrompts = [
+      ...quotePrompt,
+      ...userSystemPrompt,
+      ...prompts.slice(0, -1),
+      ...userLimitPrompt,
+      prompt
+    ];
     // chat temperature
     const modelConstantsData = ChatModelMap[model.chat.chatModel];
     // FastGpt temperature range: 1~10
     const temperature = (modelConstantsData.maxTemperature * (model.chat.temperature / 10)).toFixed(
       2
     );
+
+    await sensitiveCheck({
+      input: `${userSystemPrompt[0]?.value}\n${userLimitPrompt[0]?.value}\n${prompt.value}`
+    });
 
     // start model api. responseText and totalTokens: valid only if stream = false
     const { streamResponse, responseMessages, responseText, totalTokens } =
@@ -231,8 +250,7 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
             tokens: totalTokens
           };
         } catch (error) {
-          console.log('stream response error', error);
-          return {};
+          return Promise.reject(error);
         }
       } else {
         return {
@@ -256,7 +274,7 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
             ...(showAppDetail
               ? {
                   quote: rawSearch,
-                  systemPrompt: userSystemPrompt?.[0]?.value
+                  systemPrompt: `${userSystemPrompt[0]?.value}\n\n${userLimitPrompt[0]?.value}`
                 }
               : {})
           }
@@ -301,7 +319,12 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
   } catch (err: any) {
     res.status(500);
     if (step === 1) {
-      res.end(getErrText(err, 'Stream response error'));
+      sseResponse({
+        res,
+        event: sseResponseEventEnum.error,
+        data: JSON.stringify(err)
+      });
+      res.end();
     } else {
       jsonRes(res, {
         code: 500,

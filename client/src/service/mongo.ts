@@ -15,9 +15,6 @@ export async function connectToDatabase(): Promise<void> {
   global.qaQueueLen = 0;
   global.vectorQueueLen = 0;
   global.systemEnv = {
-    openAIKeys: process.env.OPENAIKEY || '',
-    openAITrainingKeys: process.env.OPENAI_TRAINING_KEY || '',
-    gpt4Key: process.env.GPT4KEY || '',
     vectorMaxProcess: 10,
     qaMaxProcess: 10,
     pgIvfflatProbe: 10,
@@ -39,9 +36,9 @@ export async function connectToDatabase(): Promise<void> {
     global.mongodb = await mongoose.connect(process.env.MONGODB_URI as string, {
       bufferCommands: true,
       dbName: process.env.MONGODB_NAME,
-      maxConnecting: Number(process.env.DB_MAX_LINK || 10),
-      maxPoolSize: Number(process.env.DB_MAX_LINK || 10),
-      minPoolSize: 5
+      maxConnecting: Number(process.env.DB_MAX_LINK || 5),
+      maxPoolSize: Number(process.env.DB_MAX_LINK || 5),
+      minPoolSize: 2
     });
     console.log('mongo connected');
   } catch (error) {
